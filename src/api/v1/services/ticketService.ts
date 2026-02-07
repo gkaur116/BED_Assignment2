@@ -21,7 +21,7 @@ export const createTicket = (
 ): Ticket => {
   const now = new Date().toISOString();
 
-  
+
   const newTicket: Ticket = {
     id: tickets.length + 1,
     title,
@@ -36,4 +36,14 @@ export const createTicket = (
 
 // Return created ticket
   return newTicket;
+};
+
+// Get all tickets
+export const getAllTickets = (): Ticket[] => {
+return tickets;
+};
+
+// Get ticket by ID
+export const getTicketById = (id: number): Ticket | undefined => {
+return tickets.find((t) => t.id === id);
 };
