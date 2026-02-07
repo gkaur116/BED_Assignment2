@@ -1,11 +1,9 @@
 import express, { Express } from "express";
+import morgan from "morgan";
 
-// Initialize Express application
 const app: Express = express();
 
-// Define a route
-app.get("/", (req, res) => {
-    res.send("Hello, World!");
-});
+app.use(morgan("combined"));
+app.use(express.json());
 
 export default app;
