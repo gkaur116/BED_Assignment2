@@ -1,11 +1,11 @@
-import request from "supertest";
+import request, { Response } from "supertest";
 import app from "../src/app";
 
 describe("SupportTicket Routes", () => {
     let createdTicketId: number;
 
     it("should create a ticket successfully", async () => {
-        const response = await request(app).post("/api/v1/tickets").send({
+        const response: Response = await request(app).post("/api/v1/tickets").send({
             title: "Test ticket A",
             description: "Test description A",
             priority: "low",
@@ -18,14 +18,14 @@ describe("SupportTicket Routes", () => {
     });
 
     it("should return all tickets", async () => {
-        const response = await request(app).get("/api/v1/tickets");
+        const response: Response = await request(app).get("/api/v1/tickets");
 
         expect(response.status).toBe(200);
         expect(Array.isArray(response.body.data)).toBe(true);
     });
 
     it("should return 400 when title is missing", async () => {
-        const response = await request(app).post("/api/v1/tickets").send({
+        const response: Response = await request(app).post("/api/v1/tickets").send({
             description: "No title",
             priority: "low",
         });
@@ -35,14 +35,14 @@ describe("SupportTicket Routes", () => {
     });
 
     it("should return 404 for invalid ticket ID", async () => {
-        const response = await request(app).get("/api/v1/tickets/99999");
+        const response: Response = await request(app).get("/api/v1/tickets/99999");
 
         expect(response.status).toBe(404);
         expect(response.body.message).toBe("Ticket not found");
     });
 
     it("should return 400 for invalid priority update", async () => {
-        const response = await request(app)
+        const response: Response = await request(app)
             .put(`/api/v1/tickets/${createdTicketId}`)
             .send({ priority: "urgent" });
 
@@ -53,7 +53,7 @@ describe("SupportTicket Routes", () => {
     });
 
     it("should delete a ticket", async () => {
-        const response = await request(app).delete(
+        const response: Response = await request(app).delete(
             `/api/v1/tickets/${createdTicketId}`
         );
 

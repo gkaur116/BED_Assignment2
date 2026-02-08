@@ -33,12 +33,12 @@ export const createTicketHandler = (req: Request, res: Response): void => {
     return;
   }
 
-  const ticket = createTicket(title, description, priority as TicketPriority);
+  const ticket: ReturnType<typeof createTicket> = createTicket(title, description, priority as TicketPriority);
   res.status(HTTP_STATUS.CREATED).json(ticket);
 };
 
 export const getAllTicketsHandler = (_req: Request, res: Response): void => {
-  const tickets = getAllTickets();
+  const tickets: ReturnType<typeof getAllTickets> = getAllTickets();
   res.status(HTTP_STATUS.OK).json({
     message: "Tickets retrieved",
     count: tickets.length,
@@ -47,8 +47,8 @@ export const getAllTicketsHandler = (_req: Request, res: Response): void => {
 };
 
 export const getTicketByIdHandler = (req: Request, res: Response): void => {
-  const id = Number(req.params.id);
-  const ticket = getTicketById(id);
+  const id: number = Number(req.params.id);
+  const ticket: ReturnType<typeof getTicketById> = getTicketById(id);
   if (!ticket) {
     res.status(HTTP_STATUS.NOT_FOUND).json({ message: "Ticket not found" });
     return;
@@ -57,7 +57,7 @@ export const getTicketByIdHandler = (req: Request, res: Response): void => {
 };
 
 export const updateTicketHandler = (req: Request, res: Response): void => {
-  const id = Number(req.params.id);
+  const id: number = Number(req.params.id);
   const { title, description, priority, status } = req.body;
 
   
@@ -81,7 +81,7 @@ export const updateTicketHandler = (req: Request, res: Response): void => {
     }
   }
 
-  const updatedTicket = updateTicket(id, {
+  const updatedTicket: ReturnType<typeof updateTicket> = updateTicket(id, {
     title,
     description,
     priority: priority as TicketPriority,
@@ -96,8 +96,8 @@ export const updateTicketHandler = (req: Request, res: Response): void => {
 };
 
 export const deleteTicketHandler = (req: Request, res: Response): void => {
-  const id = Number(req.params.id);
-  const deleted = deleteTicket(id);
+  const id: number = Number(req.params.id);
+  const deleted: ReturnType<typeof deleteTicket> = deleteTicket(id);
   if (!deleted) {
     res.status(HTTP_STATUS.NOT_FOUND).json({ message: "Ticket not found" });
     return;
@@ -106,8 +106,8 @@ export const deleteTicketHandler = (req: Request, res: Response): void => {
 };
 
 export const getTicketUrgencyHandler = (req: Request, res: Response): void => {
-  const id = Number(req.params.id);
-  const ticketWithUrgency = calculateTicketUrgency(id);
+  const id: number = Number(req.params.id);
+  const ticketWithUrgency: ReturnType<typeof calculateTicketUrgency> = calculateTicketUrgency(id);
 
   if (!ticketWithUrgency) {
     res.status(HTTP_STATUS.NOT_FOUND).json({ message: "Ticket not found" });

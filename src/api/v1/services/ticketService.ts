@@ -29,7 +29,7 @@ export const createTicket = (
   description: string,
   priority: TicketPriority
 ): Ticket => {
-  const now = new Date().toISOString();
+  const now: string = new Date().toISOString();
 
 
   const newTicket: Ticket = {
@@ -67,7 +67,7 @@ export const updateTicket = (
     status?: TicketStatus;
   }
 ): Ticket | undefined => {
-  const index = tickets.findIndex((t) => t.id === id);
+  const index: number = tickets.findIndex((t) => t.id === id);
   
   if (index === -1) {
     return undefined;
@@ -83,7 +83,7 @@ export const updateTicket = (
 
 export const deleteTicket = (id: number): boolean => {
 
-  const index = tickets.findIndex((t) => t.id === id);
+  const index: number = tickets.findIndex((t) => t.id === id);
   if (index === -1) {
     return false;
   }
@@ -92,12 +92,12 @@ export const deleteTicket = (id: number): boolean => {
 };
 
 export const calculateTicketUrgency = (id: number): TicketUrgency | undefined => {
-  const ticket = getTicketById(id);
+  const ticket: Ticket | undefined = getTicketById(id);
   if (!ticket) {
     return undefined;
   }
 
-  const ticketAge = Math.floor(
+  const ticketAge: number = Math.floor(
     (Date.now() - new Date(ticket.createdAt).getTime()) / (1000 * 60 * 60 * 24)
   );
 
@@ -121,7 +121,7 @@ export const calculateTicketUrgency = (id: number): TicketUrgency | undefined =>
     low: 10,
   };
 
-  const urgencyScore = baseScores[ticket.priority] + (ticketAge * 5);
+  const urgencyScore: number = baseScores[ticket.priority] + (ticketAge * 5);
 
   let urgencyLevel: string;
   if (urgencyScore >= 80) {

@@ -8,7 +8,7 @@ import {
     getTicketUrgencyHandler
 } from "../controllers/ticketController";
 
-const router = Router();
+const router: Router = Router();
 
 router.post("/tickets", createTicketHandler);
 router.get("/tickets", getAllTicketsHandler);
