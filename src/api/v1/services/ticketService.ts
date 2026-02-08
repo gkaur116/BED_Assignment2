@@ -13,6 +13,17 @@ export interface Ticket {
   createdAt: string;
 }
 
+export interface TicketUrgency {
+  id: number;
+  title: string;
+  priority: TicketPriority;
+  status: TicketStatus;
+  createdAt: string;
+  ticketAge: number;
+  urgencyScore: number;
+  urgencyLevel: string;
+}
+
 export const createTicket = (
   title: string,
   description: string,
@@ -71,11 +82,66 @@ export const updateTicket = (
 };
 
 export const deleteTicket = (id: number): boolean => {
-    
+
   const index = tickets.findIndex((t) => t.id === id);
   if (index === -1) {
     return false;
   }
   tickets.splice(index, 1);
   return true;
+};
+
+export const calculateTicketUrgency = (id: number): TicketUrgency | undefined => {
+  const ticket = getTicketById(id);
+  if (!ticket) {
+    return undefined;
+  }
+
+  const ticketAge = Math.floor(
+    (Date.now() - new Date(ticket.createdAt).getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  if (ticket.status === "resolved") {
+    return {
+      id: ticket.id,
+      title: ticket.title,
+      priority: ticket.priority,
+      status: ticket.status,
+      createdAt: ticket.createdAt,
+      ticketAge,
+      urgencyScore: 0,
+      urgencyLevel: "Minimal. Ticket resolved.",
+    };
+  }
+
+  const baseScores: Record<TicketPriority, number> = {
+    critical: 50,
+    high: 30,
+    medium: 20,
+    low: 10,
+  };
+
+  const urgencyScore = baseScores[ticket.priority] + (ticketAge * 5);
+
+  let urgencyLevel: string;
+  if (urgencyScore >= 80) {
+    urgencyLevel = "Critical. Immediate attention required.";
+  } else if (urgencyScore >= 55) {
+    urgencyLevel = "High urgency. Prioritize resolution.";
+  } else if (urgencyScore >= 30) {
+    urgencyLevel = "Moderate. Schedule for attention.";
+  } else {
+    urgencyLevel = "Low urgency. Address when capacity allows.";
+  }
+
+  return {
+    id: ticket.id,
+    title: ticket.title,
+    priority: ticket.priority,
+    status: ticket.status,
+    createdAt: ticket.createdAt,
+    ticketAge,
+    urgencyScore,
+    urgencyLevel,
+  };
 };
