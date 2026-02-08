@@ -1,28 +1,63 @@
 import request from "supertest";
 import app from "../src/app";
 
-describe("Support Ticket Routes", () => {
+describe("SupportTicket Routes", () => {
+    let createdTicketId: number;
+
+    it("should create a ticket successfully", async () => {
+        const response = await request(app).post("/api/v1/tickets").send({
+            title: "Test ticket A",
+            description: "Test description A",
+            priority: "low",
+        });
+
+        expect(response.status).toBe(201);
+        expect(response.body).toHaveProperty("id");
+
+        createdTicketId = response.body.id;
+    });
+
     it("should return all tickets", async () => {
         const response = await request(app).get("/api/v1/tickets");
+
         expect(response.status).toBe(200);
         expect(Array.isArray(response.body.data)).toBe(true);
     });
 
-    it("should return a ticket when id exists", async () => {
-        const createRes = await request(app).post("/api/v1/tickets").send({
-            title: "Test Ticket",
-            description: "Test Description",
+    it("should return 400 when title is missing", async () => {
+        const response = await request(app).post("/api/v1/tickets").send({
+            description: "No title",
             priority: "low",
         });
-        const id = createRes.body.id;
-        const res = await request(app).get(`/api/v1/tickets/${id}`);
-        expect(res.status).toBe(200);
-        expect(res.body.id).toBe(id);
+
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBe("Missing required field: title");
     });
 
-    it("should return 404 when ticket does not exist", async () => {
-        const res = await request(app).get("/api/v1/tickets/9999");
-        expect(res.status).toBe(404);
-        expect(res.body.message).toBe("Ticket not found");
-    }); 
+    it("should return 404 for invalid ticket ID", async () => {
+        const response = await request(app).get("/api/v1/tickets/99999");
+
+        expect(response.status).toBe(404);
+        expect(response.body.message).toBe("Ticket not found");
+    });
+
+    it("should return 400 for invalid priority update", async () => {
+        const response = await request(app)
+            .put(`/api/v1/tickets/${createdTicketId}`)
+            .send({ priority: "urgent" });
+
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBe(
+            "Invalid priority. Must be one of: critical, high, medium, low"
+        );
+    });
+
+    it("should delete a ticket", async () => {
+        const response = await request(app).delete(
+            `/api/v1/tickets/${createdTicketId}`
+        );
+
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBe("Ticket deleted successfully");
+    });
 });
