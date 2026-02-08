@@ -1,13 +1,13 @@
 import request from "supertest";
 import app from "../src/app";
 
-describe("Ticket Routes", () => {
+describe("Support Ticket Routes", () => {
     it("should return all tickets", async () => {
         const response = await request(app).get("/api/v1/tickets");
         expect(response.status).toBe(200);
         expect(Array.isArray(response.body.data)).toBe(true);
     });
-});
+
     it("should return a ticket when id exists", async () => {
         const createRes = await request(app).post("/api/v1/tickets").send({
             title: "Test Ticket",
@@ -25,3 +25,4 @@ describe("Ticket Routes", () => {
         expect(res.status).toBe(404);
         expect(res.body.message).toBe("Ticket not found");
     }); 
+});
